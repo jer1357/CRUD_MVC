@@ -35,5 +35,9 @@ public partial class NorthwindContext : DbContext
         OnModelCreatingPartial(modelBuilder);
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    private void OnModelCreatingPartial(ModelBuilder modelBuilder)
+    {
+        // 你可以在這裡加入自訂的 Model 配置，例如:
+        modelBuilder.Entity<Shipper>().Property(s => s.CompanyName).HasMaxLength(50);
+    }
 }
