@@ -5,11 +5,13 @@ using CRUD_MVC_Demo.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // 註冊 `DbContext`
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
+;
 
 // 註冊 MVC
-builder.Services.AddControllersWithViews(); // 如果你是 MVC
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
