@@ -21,7 +21,8 @@ namespace CRUD_MVC_Demo.Repositories
 
         public async Task<Shipper> GetByIdAsync(int id)
         {
-            return await _context.Shippers.FindAsync(id);
+            var shipper = await _context.Shippers.FindAsync(id);
+            return shipper ?? throw new KeyNotFoundException($"找不到 ID 為 {id} 的 Shipper");
         }
 
         public async Task AddAsync(Shipper shipper)
