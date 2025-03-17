@@ -1,14 +1,19 @@
-﻿using CRUD_MVC_Demo.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using CRUD_MVC_Demo.Models;
 
-public interface IShipperRepository
+namespace CRUD_MVC_Demo.Repositories
 {
-    Task<IEnumerable<Shipper>> GetAllAsync();
+    public interface IShipperRepository
+    {
+        Task<IEnumerable<Shipper>> GetAllAsync();
 
-    Task<Shipper> GetByIdAsync(int id);
+        Task<Shipper> GetByIdAsync(int id);
 
-    Task AddAsync(Shipper shipper);
+        Task AddAsync(Shipper shipper);
 
-    Task UpdateAsync(Shipper shipper);
+        Task<bool> UpdateAsync(Shipper shipper);
 
-    Task DeleteAsync(int id);
+        Task DeleteAsync(int id);
+    }
 }

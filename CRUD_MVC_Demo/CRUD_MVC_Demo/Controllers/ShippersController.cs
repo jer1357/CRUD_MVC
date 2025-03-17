@@ -1,78 +1,60 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using CRUD_MVC_Demo.Services;
 using CRUD_MVC_Demo.Models;
 
 namespace CRUD_MVC_Demo.Controllers
 {
     public class ShippersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IShipperService _shipperService;
 
-        public ShippersController(ApplicationDbContext context)
+        public ShippersController(IShipperService shipperService)
         {
-            _context = context;
+            _shipperService = shipperService;
         }
 
-        // GET: Shippers
+        // 📌 GET: Shippers（顯示所有貨運公司）
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Shippers.ToListAsync());
+            var shippers = await _shipperService.GetAllShippersAsync();
+            return View(shippers);
         }
 
-        // GET: Shippers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // 📌 GET: Shippers/Details/5（顯示特定貨運公司詳情）
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shipper = await _context.Shippers
-                .FirstOrDefaultAsync(m => m.ShipperId == id);
+            var shipper = await _shipperService.GetShipperByIdAsync(id);
             if (shipper == null)
             {
                 return NotFound();
             }
-
             return View(shipper);
         }
 
-        // GET: Shippers/Create
+        // 📌 GET: Shippers/Create（顯示新增貨運公司表單）
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Shippers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // 📌 POST: Shippers/Create（處理表單提交）
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ShipperId,CompanyName,Phone")] Shipper shipper)
+        public async Task<IActionResult> Create([Bind("CompanyName,Phone")] Shipper shipper)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(shipper);
-                await _context.SaveChangesAsync();
+                await _shipperService.CreateShipperAsync(shipper);
                 return RedirectToAction(nameof(Index));
             }
             return View(shipper);
         }
 
-        // GET: Shippers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // 📌 GET: Shippers/Edit/5（顯示編輯貨運公司表單）
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shipper = await _context.Shippers.FindAsync(id);
+            var shipper = await _shipperService.GetShipperByIdAsync(id);
             if (shipper == null)
             {
                 return NotFound();
@@ -80,9 +62,7 @@ namespace CRUD_MVC_Demo.Controllers
             return View(shipper);
         }
 
-        // POST: Shippers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // 📌 POST: Shippers/Edit/5（處理編輯提交）
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ShipperId,CompanyName,Phone")] Shipper shipper)
@@ -94,63 +74,34 @@ namespace CRUD_MVC_Demo.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var success = await _shipperService.UpdateShipperAsync(shipper);
+                if (!success)
                 {
-                    _context.Update(shipper);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ShipperExists(shipper.ShipperId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(shipper);
         }
 
-        // GET: Shippers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // 📌 GET: Shippers/Delete/5（顯示刪除確認頁面）
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shipper = await _context.Shippers
-                .FirstOrDefaultAsync(m => m.ShipperId == id);
+            var shipper = await _shipperService.GetShipperByIdAsync(id);
             if (shipper == null)
             {
                 return NotFound();
             }
-
             return View(shipper);
         }
 
-        // POST: Shippers/Delete/5
+        // 📌 POST: Shippers/Delete/5（執行刪除）
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var shipper = await _context.Shippers.FindAsync(id);
-            if (shipper != null)
-            {
-                _context.Shippers.Remove(shipper);
-            }
-
-            await _context.SaveChangesAsync();
+            await _shipperService.DeleteShipperAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ShipperExists(int id)
-        {
-            return _context.Shippers.Any(e => e.ShipperId == id);
         }
     }
 }

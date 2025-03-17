@@ -1,14 +1,19 @@
-﻿using CRUD_MVC_Demo.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using CRUD_MVC_Demo.Models;
 
-public interface IShipperService
+namespace CRUD_MVC_Demo.Services
 {
-    Task<IEnumerable<Shipper>> GetAllShippersAsync();
+    public interface IShipperService
+    {
+        Task<IEnumerable<Shipper>> GetAllShippersAsync();
 
-    Task<Shipper> GetShipperByIdAsync(int id);
+        Task<Shipper> GetShipperByIdAsync(int id);
 
-    Task AddShipperAsync(Shipper shipper);
+        Task CreateShipperAsync(Shipper shipper);
 
-    Task UpdateShipperAsync(Shipper shipper);
+        Task<bool> UpdateShipperAsync(Shipper shipper);
 
-    Task DeleteShipperAsync(int id);
+        Task DeleteShipperAsync(int id);
+    }
 }

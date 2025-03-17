@@ -1,36 +1,42 @@
-﻿using CRUD_MVC_Demo.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using CRUD_MVC_Demo.Models;
+using CRUD_MVC_Demo.Repositories;
 
-public class ShipperService : IShipperService
+namespace CRUD_MVC_Demo.Services
 {
-    private readonly IShipperRepository _repository;
-
-    public ShipperService(IShipperRepository repository)
+    public class ShipperService : IShipperService
     {
-        _repository = repository;
-    }
+        private readonly IShipperRepository _shipperRepository;
 
-    public async Task<IEnumerable<Shipper>> GetAllShippersAsync()
-    {
-        return await _repository.GetAllAsync();
-    }
+        public ShipperService(IShipperRepository shipperRepository)
+        {
+            _shipperRepository = shipperRepository;
+        }
 
-    public async Task<Shipper> GetShipperByIdAsync(int id)
-    {
-        return await _repository.GetByIdAsync(id);
-    }
+        public async Task<IEnumerable<Shipper>> GetAllShippersAsync()
+        {
+            return await _shipperRepository.GetAllAsync();
+        }
 
-    public async Task AddShipperAsync(Shipper shipper)
-    {
-        await _repository.AddAsync(shipper);
-    }
+        public async Task<Shipper> GetShipperByIdAsync(int id)
+        {
+            return await _shipperRepository.GetByIdAsync(id);
+        }
 
-    public async Task UpdateShipperAsync(Shipper shipper)
-    {
-        await _repository.UpdateAsync(shipper);
-    }
+        public async Task CreateShipperAsync(Shipper shipper)
+        {
+            await _shipperRepository.AddAsync(shipper);
+        }
 
-    public async Task DeleteShipperAsync(int id)
-    {
-        await _repository.DeleteAsync(id);
+        public async Task<bool> UpdateShipperAsync(Shipper shipper)
+        {
+            return await _shipperRepository.UpdateAsync(shipper);
+        }
+
+        public async Task DeleteShipperAsync(int id)
+        {
+            await _shipperRepository.DeleteAsync(id);
+        }
     }
 }
