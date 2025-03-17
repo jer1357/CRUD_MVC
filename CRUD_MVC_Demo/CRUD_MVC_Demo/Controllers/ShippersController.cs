@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CRUD_MVC_Demo.Services;
 using CRUD_MVC_Demo.Models;
@@ -17,19 +18,37 @@ namespace CRUD_MVC_Demo.Controllers
         // 📌 GET: Shippers（顯示所有貨運公司）
         public async Task<IActionResult> Index()
         {
-            var shippers = await _shipperService.GetAllShippersAsync();
-            return View(shippers);
+            try
+            {
+                var shippers = await _shipperService.GetAllShippersAsync();
+                return View(shippers);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "發生錯誤，請稍後再試。");
+                Console.WriteLine($"錯誤訊息: {ex.Message}");
+                return View();
+            }
         }
 
         // 📌 GET: Shippers/Details/5（顯示特定貨運公司詳情）
         public async Task<IActionResult> Details(int id)
         {
-            var shipper = await _shipperService.GetShipperByIdAsync(id);
-            if (shipper == null)
+            try
             {
-                return NotFound();
+                var shipper = await _shipperService.GetShipperByIdAsync(id);
+                if (shipper == null)
+                {
+                    return NotFound();
+                }
+                return View(shipper);
             }
-            return View(shipper);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "發生錯誤，請稍後再試。");
+                Console.WriteLine($"錯誤訊息: {ex.Message}");
+                return View();
+            }
         }
 
         // 📌 GET: Shippers/Create（顯示新增貨運公司表單）
@@ -43,23 +62,41 @@ namespace CRUD_MVC_Demo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CompanyName,Phone")] Shipper shipper)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await _shipperService.CreateShipperAsync(shipper);
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    await _shipperService.CreateShipperAsync(shipper);
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(shipper);
             }
-            return View(shipper);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "無法新增貨運公司，請稍後再試。");
+                Console.WriteLine($"錯誤訊息: {ex.Message}");
+                return View(shipper);
+            }
         }
 
         // 📌 GET: Shippers/Edit/5（顯示編輯貨運公司表單）
         public async Task<IActionResult> Edit(int id)
         {
-            var shipper = await _shipperService.GetShipperByIdAsync(id);
-            if (shipper == null)
+            try
             {
-                return NotFound();
+                var shipper = await _shipperService.GetShipperByIdAsync(id);
+                if (shipper == null)
+                {
+                    return NotFound();
+                }
+                return View(shipper);
             }
-            return View(shipper);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "發生錯誤，請稍後再試。");
+                Console.WriteLine($"錯誤訊息: {ex.Message}");
+                return View();
+            }
         }
 
         // 📌 POST: Shippers/Edit/5（處理編輯提交）
@@ -71,28 +108,45 @@ namespace CRUD_MVC_Demo.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            try
             {
-                var success = await _shipperService.UpdateShipperAsync(shipper);
-                if (!success)
+                if (ModelState.IsValid)
                 {
-                    return NotFound();
+                    var success = await _shipperService.UpdateShipperAsync(shipper);
+                    if (!success)
+                    {
+                        return NotFound();
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(shipper);
             }
-            return View(shipper);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "無法更新貨運公司，請稍後再試。");
+                Console.WriteLine($"錯誤訊息: {ex.Message}");
+                return View(shipper);
+            }
         }
 
         // 📌 GET: Shippers/Delete/5（顯示刪除確認頁面）
         public async Task<IActionResult> Delete(int id)
         {
-            var shipper = await _shipperService.GetShipperByIdAsync(id);
-            if (shipper == null)
+            try
             {
-                return NotFound();
+                var shipper = await _shipperService.GetShipperByIdAsync(id);
+                if (shipper == null)
+                {
+                    return NotFound();
+                }
+                return View(shipper);
             }
-            return View(shipper);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "發生錯誤，請稍後再試。");
+                Console.WriteLine($"錯誤訊息: {ex.Message}");
+                return View();
+            }
         }
 
         // 📌 POST: Shippers/Delete/5（執行刪除）
@@ -100,8 +154,17 @@ namespace CRUD_MVC_Demo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _shipperService.DeleteShipperAsync(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _shipperService.DeleteShipperAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "無法刪除貨運公司，請稍後再試。");
+                Console.WriteLine($"錯誤訊息: {ex.Message}");
+                return View();
+            }
         }
     }
 }
